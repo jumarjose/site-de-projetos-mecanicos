@@ -1,0 +1,719 @@
+<!DOCTYPE html>
+<html lang="pt-BR" class="scroll-smooth">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Apex Engenharia | Projetos Mecânicos e Modelagem CAD 3D</title>
+    <!-- Tailwind CSS CDN -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <!-- Google Fonts: Rajdhani para títulos técnicos e Inter para leitura fluida -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600&family=Rajdhani:wght@500;600;700&display=swap" rel="stylesheet">
+    <!-- FontAwesome para Ícones -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    colors: {
+                        tech: {
+                            darkest: '#070b13',
+                            dark: '#0e1726',
+                            blueprint: '#0f2042',
+                            orange: '#f59e0b', // Laranja Engenharia / Amber
+                            cyan: '#06b6d4', // Azul Técnico
+                            grid: 'rgba(255, 255, 255, 0.04)'
+                        }
+                    },
+                    fontFamily: {
+                        sans: ['Inter', 'sans-serif'],
+                        tech: ['Rajdhani', 'sans-serif'],
+                    }
+                }
+            }
+        }
+    </script>
+
+    <style>
+        /* Estilo Blueprint Grid Background */
+        .blueprint-grid {
+            background-color: #070b13;
+            background-image: 
+                linear-gradient(to right, rgba(6, 182, 212, 0.05) 1px, transparent 1px),
+                linear-gradient(to bottom, rgba(6, 182, 212, 0.05) 1px, transparent 1px);
+            background-size: 40px 40px;
+        }
+
+        .blueprint-grid-fine {
+            background-image: 
+                linear-gradient(to right, rgba(6, 182, 212, 0.02) 1px, transparent 1px),
+                linear-gradient(to bottom, rgba(6, 182, 212, 0.02) 1px, transparent 1px);
+            background-size: 8px 8px;
+        }
+
+        /* Cantoneiras Técnicas estilo CAD */
+        .cad-corners::before, .cad-corners::after {
+            content: "";
+            position: absolute;
+            width: 12px;
+            height: 12px;
+            border-color: #f59e0b;
+            border-style: solid;
+            pointer-events: none;
+        }
+        .cad-corners::before {
+            top: 10px;
+            left: 10px;
+            border-width: 2px 0 0 2px;
+        }
+        .cad-corners::after {
+            bottom: 10px;
+            right: 10px;
+            border-width: 0 2px 2px 0;
+        }
+
+        /* Animação de rotação suave para engrenagens */
+        @keyframes gear-rotate {
+            from { transform: rotate(0deg); }
+            to { transform: rotate(360deg); }
+        }
+        .rotate-gear {
+            animation: gear-rotate 25s linear infinite;
+        }
+        .rotate-gear-reverse {
+            animation: gear-rotate 15s linear infinite reverse;
+        }
+    </style>
+</head>
+<body class="bg-tech-darkest text-gray-100 font-sans antialiased blueprint-grid">
+
+    <!-- Grid Fina por Cima -->
+    <div class="blueprint-grid-fine min-h-screen flex flex-col justify-between">
+
+        <!-- HEADER / NAVIGATION -->
+        <header class="sticky top-0 z-50 bg-tech-darkest/90 backdrop-blur-md border-b border-tech-cyan/20">
+            <div class="max-w-7xl mx-auto px-6 h-20 flex items-center justify-between">
+                <!-- Logo -->
+                <a href="#" class="flex items-center space-x-3 group">
+                    <div class="relative w-10 h-10 flex items-center justify-center">
+                        <i class="fa-solid fa-gear text-tech-orange text-2xl absolute rotate-gear"></i>
+                        <i class="fa-solid fa-compass-drafting text-tech-cyan text-sm absolute"></i>
+                    </div>
+                    <div>
+                        <span class="font-tech text-2xl font-bold tracking-wider text-white">APEX</span>
+                        <span class="font-tech text-xs block text-tech-cyan tracking-[0.25em] -mt-1">ENGENHARIA</span>
+                    </div>
+                </a>
+
+                <!-- Desktop Menu -->
+                <nav class="hidden md:flex items-center space-x-8">
+                    <a href="#inicio" class="font-tech text-lg text-gray-300 hover:text-tech-orange transition-colors duration-300 tracking-wide">Início</a>
+                    <a href="#sobre" class="font-tech text-lg text-gray-300 hover:text-tech-orange transition-colors duration-300 tracking-wide">Sobre Nós</a>
+                    <a href="#servicos" class="font-tech text-lg text-gray-300 hover:text-tech-orange transition-colors duration-300 tracking-wide">Serviços</a>
+                    <a href="#portfolio" class="font-tech text-lg text-gray-300 hover:text-tech-orange transition-colors duration-300 tracking-wide">Portfólio</a>
+                    <a href="#depoimentos" class="font-tech text-lg text-gray-300 hover:text-tech-orange transition-colors duration-300 tracking-wide">Clientes</a>
+                    <a href="#orcamento" class="bg-transparent border border-tech-orange text-tech-orange hover:bg-tech-orange hover:text-tech-darkest font-tech font-semibold px-5 py-2 rounded-sm transition-all duration-300 tracking-wider">
+                        <i class="fa-solid fa-calculator mr-2"></i>ORÇAMENTO
+                    </a>
+                </nav>
+
+                <!-- Mobile Menu Button -->
+                <button id="mobile-menu-btn" class="md:hidden text-gray-300 hover:text-tech-orange focus:outline-none">
+                    <i class="fa-solid fa-bars-staggered text-2xl"></i>
+                </button>
+            </div>
+
+            <!-- Mobile Dropdown Menu -->
+            <div id="mobile-menu" class="hidden md:hidden bg-tech-dark/95 border-b border-tech-cyan/20 px-6 py-4 space-y-4">
+                <a href="#inicio" class="block font-tech text-lg text-gray-200 hover:text-tech-orange">Início</a>
+                <a href="#sobre" class="block font-tech text-lg text-gray-200 hover:text-tech-orange">Sobre Nós</a>
+                <a href="#servicos" class="block font-tech text-lg text-gray-200 hover:text-tech-orange">Serviços</a>
+                <a href="#portfolio" class="block font-tech text-lg text-gray-200 hover:text-tech-orange">Portfólio</a>
+                <a href="#depoimentos" class="block font-tech text-lg text-gray-200 hover:text-tech-orange">Clientes</a>
+                <a href="#orcamento" class="block bg-tech-orange text-tech-darkest font-tech font-semibold text-center py-2 rounded-sm">Solicitar Orçamento</a>
+            </div>
+        </header>
+
+        <!-- HERO SECTION -->
+        <section id="inicio" class="relative py-20 md:py-32 overflow-hidden border-b border-tech-cyan/10">
+            <!-- Tech Crosshairs & coordinates decor -->
+            <div class="absolute top-10 left-10 text-[10px] font-mono text-tech-cyan/40 select-none hidden lg:block">X: 548.91 / Y: 102.44</div>
+            <div class="absolute bottom-10 right-10 text-[10px] font-mono text-tech-cyan/40 select-none hidden lg:block">SYS.STATUS: OK // DRAFT_MODE</div>
+            <div class="absolute top-1/2 left-5 -translate-y-1/2 flex flex-col gap-2 select-none text-tech-cyan/20 hidden lg:flex">
+                <span>+</span><span>+</span><span>+</span>
+            </div>
+
+            <div class="max-w-7xl mx-auto px-6 grid grid-cols-1 lg:grid-cols-12 gap-12 items-center">
+                <!-- Hero Text -->
+                <div class="lg:col-span-7 space-y-6 z-10">
+                    <div class="inline-flex items-center space-x-2 bg-tech-cyan/10 border border-tech-cyan/30 px-3 py-1 rounded-full">
+                        <span class="w-2 h-2 rounded-full bg-tech-cyan animate-pulse"></span>
+                        <span class="text-xs font-mono text-tech-cyan uppercase tracking-wider">Indústria 4.0 & Engenharia Digital</span>
+                    </div>
+                    <h1 class="text-4xl md:text-6xl font-tech font-bold leading-none tracking-tight">
+                        Transformamos Ideias em <br>
+                        <span class="text-transparent bg-clip-text bg-gradient-to-r from-tech-orange via-yellow-500 to-tech-cyan">
+                            Precisão Industrial
+                        </span>
+                    </h1>
+                    <p class="text-gray-400 text-lg max-w-xl">
+                        Desenvolvimento de projetos mecânicos de alta complexidade, detalhamento para fabricação e modelagem CAD 3D avançada sob normas nacionais e internacionais.
+                    </p>
+                    <div class="flex flex-wrap gap-4 pt-4">
+                        <a href="#orcamento" class="bg-tech-orange text-tech-darkest hover:bg-yellow-500 font-tech font-bold px-8 py-4 rounded-sm transition-all duration-300 tracking-wider shadow-lg shadow-tech-orange/20">
+                            INICIAR PROJETO <i class="fa-solid fa-arrow-right ml-2"></i>
+                        </a>
+                        <a href="#portfolio" class="bg-transparent border border-gray-600 hover:border-tech-cyan hover:text-tech-cyan text-gray-300 font-tech font-bold px-8 py-4 rounded-sm transition-all duration-300 tracking-wider">
+                            VER PORTFÓLIO
+                        </a>
+                    </div>
+                </div>
+
+                <!-- Hero Graphics (Blueprint Tech Mockup) -->
+                <div class="lg:col-span-5 relative flex justify-center items-center">
+                    <div class="relative w-80 h-80 md:w-96 md:h-96 border border-tech-cyan/30 rounded-full flex items-center justify-center p-8 bg-tech-blueprint/20 backdrop-blur-sm shadow-2xl shadow-tech-cyan/5">
+                        <!-- Outer blueprint technical ring -->
+                        <div class="absolute inset-0 border border-dashed border-tech-cyan/20 rounded-full animate-spin [animation-duration:60s]"></div>
+                        <!-- CAD grid indicator lines -->
+                        <div class="absolute h-full w-[1px] bg-tech-cyan/20"></div>
+                        <div class="absolute w-full h-[1px] bg-tech-cyan/20"></div>
+                        
+                        <!-- Gear SVGs revolving -->
+                        <div class="relative w-64 h-64 flex items-center justify-center">
+                            <i class="fa-solid fa-gear text-tech-cyan/20 text-[180px] absolute rotate-gear"></i>
+                            <i class="fa-solid fa-gear text-tech-orange/30 text-[100px] absolute rotate-gear-reverse -translate-x-12 -translate-y-12"></i>
+                            <i class="fa-solid fa-compass-drafting text-tech-orange text-5xl z-10 bg-tech-darkest/80 p-4 rounded-full border border-tech-orange/40"></i>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- SOBRE NÓS -->
+        <section id="sobre" class="py-24 bg-tech-dark/50 border-b border-tech-cyan/10 relative">
+            <div class="max-w-7xl mx-auto px-6">
+                <div class="grid grid-cols-1 lg:grid-cols-12 gap-12 items-center">
+                    
+                    <!-- Left Column: Stylized Vector/Technical Details Mockup -->
+                    <div class="lg:col-span-5 order-2 lg:order-1 relative">
+                        <div class="border border-tech-cyan/30 bg-tech-darkest p-6 rounded-lg cad-corners relative overflow-hidden shadow-2xl">
+                            <!-- Code overlay simulation -->
+                            <div class="font-mono text-[11px] text-tech-cyan/60 space-y-1">
+                                <p class="text-tech-orange">// CAD VIEWER - LAYER: ASSEMBLY_01</p>
+                                <p>&gt; RUNNING STRESS ANALYSIS... SUCCESSFUL</p>
+                                <p>&gt; SAFETY FACTOR: 2.45 (OPTIMIZED)</p>
+                                <p>&gt; MATERIAL: AISI 1045 STEEL</p>
+                            </div>
+                            <!-- Mock Blueprint Image -->
+                            <div class="mt-4 border border-tech-cyan/20 bg-tech-blueprint/30 rounded flex items-center justify-center h-64 overflow-hidden relative">
+                                <div class="absolute inset-0 bg-[radial-gradient(circle,_transparent_30%,_#070b13_100%)]"></div>
+                                <!-- Abstract technical drawing paths (SVGs) -->
+                                <svg class="w-11/12 h-5/6 text-tech-cyan opacity-40" viewBox="0 0 100 100" fill="none" stroke="currentColor" stroke-width="0.5">
+                                    <circle cx="50" cy="50" r="30" />
+                                    <circle cx="50" cy="50" r="15" stroke-dasharray="2,2" />
+                                    <line x1="10" y1="50" x2="90" y2="50" />
+                                    <line x1="50" y1="10" x2="50" y2="90" />
+                                    <path d="M 25 25 L 75 75" stroke-dasharray="1,2" />
+                                    <path d="M 25 75 L 75 25" stroke-dasharray="1,2" />
+                                    <rect x="35" y="35" width="30" height="30" stroke-dasharray="2,2" />
+                                </svg>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Right Column: Context/Info -->
+                    <div class="lg:col-span-7 order-1 lg:order-2 space-y-6">
+                        <div class="flex items-center space-x-2">
+                            <span class="h-[1px] w-8 bg-tech-orange"></span>
+                            <span class="font-tech text-tech-orange tracking-widest uppercase font-semibold text-sm">Quem Somos</span>
+                        </div>
+                        <h2 class="text-3xl md:text-4xl font-tech font-bold text-white">Engenharia de alta performance para os setores mais exigentes do mercado</h2>
+                        <p class="text-gray-400">
+                            Somos especialistas em fornecer soluções em engenharia mecânica de alta fidelidade. Nosso foco é desenhar o futuro industrial aliando processos inteligentes de manufatura a ferramentas CAD de ponta. Desenvolvemos toda a documentação necessária para que seu projeto saia do papel direto para a usinagem e montagem sem erros.
+                        </p>
+                        
+                        <!-- List of development capacities -->
+                        <div class="grid grid-cols-1 md:grid-cols-2 gap-4 pt-4">
+                            <div class="flex items-start space-x-3">
+                                <i class="fa-solid fa-drafting-compass text-tech-orange mt-1"></i>
+                                <div>
+                                    <h4 class="font-tech font-bold text-white tracking-wide">Desenhos Técnicos Mecânicos</h4>
+                                    <p class="text-xs text-gray-500">Desenhos de conjunto e detalhamentos precisos em 2D.</p>
+                                </div>
+                            </div>
+                            <div class="flex items-start space-x-3">
+                                <i class="fa-solid fa-industry text-tech-orange mt-1"></i>
+                                <div>
+                                    <h4 class="font-tech font-bold text-white tracking-wide">Projetos Industriais</h4>
+                                    <p class="text-xs text-gray-500">Layouts e planejamento de maquinários pesados.</p>
+                                </div>
+                            </div>
+                            <div class="flex items-start space-x-3">
+                                <i class="fa-solid fa-cube text-tech-orange mt-1"></i>
+                                <div>
+                                    <h4 class="font-tech font-bold text-white tracking-wide">Modelagem 3D</h4>
+                                    <p class="text-xs text-gray-500">Modelos paramétricos sólidos (SolidWorks / Inventor).</p>
+                                </div>
+                            </div>
+                            <div class="flex items-start space-x-3">
+                                <i class="fa-solid fa-gears text-tech-orange mt-1"></i>
+                                <div>
+                                    <h4 class="font-tech font-bold text-white tracking-wide">Detalhamento para Fabricação</h4>
+                                    <p class="text-xs text-gray-500">Projetos prontos para manufatura rápida (DFM).</p>
+                                </div>
+                            </div>
+                            <div class="flex items-start space-x-3">
+                                <i class="fa-solid fa-fire text-tech-orange mt-1"></i>
+                                <div>
+                                    <h4 class="font-tech font-bold text-white tracking-wide">Projetos de Soldagem</h4>
+                                    <p class="text-xs text-gray-500">Especificação de juntas e simbologias AWS/ISO.</p>
+                                </div>
+                            </div>
+                            <div class="flex items-start space-x-3">
+                                <i class="fa-solid fa-scissors text-tech-orange mt-1"></i>
+                                <div>
+                                    <h4 class="font-tech font-bold text-white tracking-wide">Cortes e Usinagem</h4>
+                                    <p class="text-xs text-gray-500">Arquivos otimizados para Laser, Plasma e CNC.</p>
+                                </div>
+                            </div>
+                            <div class="flex items-start space-x-3 md:col-span-2">
+                                <i class="fa-solid fa-file-shield text-tech-orange mt-1"></i>
+                                <div>
+                                    <h4 class="font-tech font-bold text-white tracking-wide">Documentação Técnica</h4>
+                                    <p class="text-xs text-gray-500">Manuais técnicos, laudos e ARTs de projetos sob demanda.</p>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    
+                </div>
+            </div>
+        </section>
+
+        <!-- SERVIÇOS -->
+        <section id="servicos" class="py-24 border-b border-tech-cyan/10">
+            <div class="max-w-7xl mx-auto px-6">
+                <div class="text-center max-w-2xl mx-auto mb-16 space-y-4">
+                    <div class="inline-flex items-center space-x-2 bg-tech-orange/10 border border-tech-orange/30 px-3 py-1 rounded-full">
+                        <span class="text-xs font-mono text-tech-orange uppercase tracking-widest">Nossas Soluções</span>
+                    </div>
+                    <h2 class="text-3xl md:text-4xl font-tech font-bold text-white">Serviços Especializados de Engenharia</h2>
+                    <p class="text-gray-400 text-sm">Desenvolvimento de engenharia de ponta a ponta com rigor normativo internacional.</p>
+                </div>
+
+                <!-- Grid de Cards -->
+                <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
+                    <!-- Card 1 -->
+                    <div class="group relative bg-tech-dark p-8 rounded-lg border border-tech-cyan/10 hover:border-tech-orange/50 transition-all duration-300 shadow-xl overflow-hidden cad-corners">
+                        <div class="absolute top-0 right-0 w-16 h-16 bg-gradient-to-br from-tech-orange/10 to-transparent pointer-events-none"></div>
+                        <div class="text-tech-orange text-3xl mb-4 group-hover:scale-110 transition-transform duration-300">
+                            <i class="fa-solid fa-compass-drafting"></i>
+                        </div>
+                        <h3 class="font-tech font-bold text-xl text-white tracking-wide mb-2">Desenho Técnico 2D</h3>
+                        <p class="text-gray-400 text-sm leading-relaxed">Desenhos técnicos completos em AutoCAD, respeitando as normas ABNT, com cotas, tolerâncias geométricas, vistas ortogonais e cortes específicos.</p>
+                    </div>
+
+                    <!-- Card 2 -->
+                    <div class="group relative bg-tech-dark p-8 rounded-lg border border-tech-cyan/10 hover:border-tech-orange/50 transition-all duration-300 shadow-xl overflow-hidden cad-corners">
+                        <div class="absolute top-0 right-0 w-16 h-16 bg-gradient-to-br from-tech-orange/10 to-transparent pointer-events-none"></div>
+                        <div class="text-tech-orange text-3xl mb-4 group-hover:scale-110 transition-transform duration-300">
+                            <i class="fa-solid fa-cube"></i>
+                        </div>
+                        <h3 class="font-tech font-bold text-xl text-white tracking-wide mb-2">Modelagem 3D Paramétrica</h3>
+                        <p class="text-gray-400 text-sm leading-relaxed">Desenvolvimento de conjuntos e peças em modeladores 3D de alta gama (SolidWorks/Inventor). Simulações de encaixes e montagem virtual.</p>
+                    </div>
+
+                    <!-- Card 3 -->
+                    <div class="group relative bg-tech-dark p-8 rounded-lg border border-tech-cyan/10 hover:border-tech-orange/50 transition-all duration-300 shadow-xl overflow-hidden cad-corners">
+                        <div class="absolute top-0 right-0 w-16 h-16 bg-gradient-to-br from-tech-orange/10 to-transparent pointer-events-none"></div>
+                        <div class="text-tech-orange text-3xl mb-4 group-hover:scale-110 transition-transform duration-300">
+                            <i class="fa-solid fa-gears"></i>
+                        </div>
+                        <h3 class="font-tech font-bold text-xl text-white tracking-wide mb-2">Engenharia Reversa</h3>
+                        <p class="text-gray-400 text-sm leading-relaxed">Mapeamento e redimensionalização de componentes físicos desgastados ou antigos com geração de novos desenhos técnicos atualizados para replicação.</p>
+                    </div>
+
+                    <!-- Card 4 -->
+                    <div class="group relative bg-tech-dark p-8 rounded-lg border border-tech-cyan/10 hover:border-tech-orange/50 transition-all duration-300 shadow-xl overflow-hidden cad-corners">
+                        <div class="absolute top-0 right-0 w-16 h-16 bg-gradient-to-br from-tech-orange/10 to-transparent pointer-events-none"></div>
+                        <div class="text-tech-orange text-3xl mb-4 group-hover:scale-110 transition-transform duration-300">
+                            <i class="fa-solid fa-bezier-curve"></i>
+                        </div>
+                        <h3 class="font-tech font-bold text-xl text-white tracking-wide mb-2">Simulação e Elementos Finitos (FEA)</h3>
+                        <p class="text-gray-400 text-sm leading-relaxed">Análise estrutural estática e linear de componentes mecânicos para identificar pontos críticos de falha, reduzindo custos de fabricação e testes.</p>
+                    </div>
+
+                    <!-- Card 5 -->
+                    <div class="group relative bg-tech-dark p-8 rounded-lg border border-tech-cyan/10 hover:border-tech-orange/50 transition-all duration-300 shadow-xl overflow-hidden cad-corners">
+                        <div class="absolute top-0 right-0 w-16 h-16 bg-gradient-to-br from-tech-orange/10 to-transparent pointer-events-none"></div>
+                        <div class="text-tech-orange text-3xl mb-4 group-hover:scale-110 transition-transform duration-300">
+                            <i class="fa-solid fa-fire-burner"></i>
+                        </div>
+                        <h3 class="font-tech font-bold text-xl text-white tracking-wide mb-2">Estruturas Metálicas & Soldagem</h3>
+                        <p class="text-gray-400 text-sm leading-relaxed">Projeto mecânico de mezaninos, racks industriais e dispositivos de fixação. Detalhamento de soldagem padrão com simbologia técnica correta.</p>
+                    </div>
+
+                    <!-- Card 6 -->
+                    <div class="group relative bg-tech-dark p-8 rounded-lg border border-tech-cyan/10 hover:border-tech-orange/50 transition-all duration-300 shadow-xl overflow-hidden cad-corners">
+                        <div class="absolute top-0 right-0 w-16 h-16 bg-gradient-to-br from-tech-orange/10 to-transparent pointer-events-none"></div>
+                        <div class="text-tech-orange text-3xl mb-4 group-hover:scale-110 transition-transform duration-300">
+                            <i class="fa-solid fa-file-invoice"></i>
+                        </div>
+                        <h3 class="font-tech font-bold text-xl text-white tracking-wide mb-2">Documentação Técnica & Manual</h3>
+                        <p class="text-gray-400 text-sm leading-relaxed">Emissão de manuais de instalação, listas detalhadas de materiais (BOM), diagramas esquemáticos e prontuários exigidos para conformidade legal.</p>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- GALERIA DE PROJETOS -->
+        <section id="portfolio" class="py-24 bg-tech-dark/30 border-b border-tech-cyan/10">
+            <div class="max-w-7xl mx-auto px-6">
+                <div class="flex flex-col md:flex-row md:items-end justify-between mb-16 gap-6">
+                    <div class="space-y-4">
+                        <div class="flex items-center space-x-2">
+                            <span class="h-[1px] w-8 bg-tech-orange"></span>
+                            <span class="font-tech text-tech-orange tracking-widest uppercase font-semibold text-sm">Nosso Portfólio</span>
+                        </div>
+                        <h2 class="text-3xl md:text-4xl font-tech font-bold text-white">Precisão Visível em Cada Detalhe</h2>
+                    </div>
+                    <!-- Filter Buttons -->
+                    <div class="flex flex-wrap gap-2">
+                        <button onclick="filterPortfolio('todos')" class="portfolio-tab active px-4 py-2 border border-tech-cyan bg-tech-cyan text-tech-darkest font-tech font-semibold text-sm rounded-sm transition-all duration-300">TODOS</button>
+                        <button onclick="filterPortfolio('cad')" class="portfolio-tab px-4 py-2 border border-tech-cyan/30 text-gray-300 hover:border-tech-cyan font-tech font-semibold text-sm rounded-sm transition-all duration-300">3D CAD / RENDERS</button>
+                        <button onclick="filterPortfolio('detalhamento')" class="portfolio-tab px-4 py-2 border border-tech-cyan/30 text-gray-300 hover:border-tech-cyan font-tech font-semibold text-sm rounded-sm transition-all duration-300">BLUEPRINTS / 2D</button>
+                    </div>
+                </div>
+
+                <!-- Projects Grid -->
+                <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
+                    <!-- Project Card 1 -->
+                    <div class="project-card group bg-tech-dark rounded-lg overflow-hidden border border-tech-cyan/10 hover:border-tech-cyan/40 transition-all duration-300" data-category="cad">
+                        <div class="relative overflow-hidden h-64 bg-tech-blueprint flex items-center justify-center p-4">
+                            <img src="https://images.unsplash.com/photo-1581091226825-a6a2a5aee158?auto=format&fit=crop&q=80&w=800" alt="Modelagem Engrenagem Helicoidal" class="absolute inset-0 w-full h-full object-cover opacity-40 mix-blend-overlay group-hover:scale-110 transition-all duration-500">
+                            <div class="relative z-10 w-full h-full flex items-center justify-center">
+                                <span class="absolute top-2 left-2 text-[10px] font-mono text-tech-orange">SOLIDWORKS v2026 // COMPLETED</span>
+                                <i class="fa-solid fa-gears text-tech-orange/80 text-7xl"></i>
+                            </div>
+                        </div>
+                        <div class="p-6 border-t border-tech-cyan/10">
+                            <span class="text-xs font-mono text-tech-cyan uppercase">Modelagem 3D & Simulação</span>
+                            <h3 class="font-tech font-bold text-xl text-white tracking-wide mt-1">Engrenagem Helicoidal Industrial</h3>
+                            <p class="text-xs text-gray-500 mt-2">Redutores de alta rotação simulados via CFD e análise estática.</p>
+                        </div>
+                    </div>
+
+                    <!-- Project Card 2 -->
+                    <div class="project-card group bg-tech-dark rounded-lg overflow-hidden border border-tech-cyan/10 hover:border-tech-cyan/40 transition-all duration-300" data-category="detalhamento">
+                        <div class="relative overflow-hidden h-64 bg-tech-blueprint flex items-center justify-center p-4">
+                            <img src="https://images.unsplash.com/photo-1537462715879-360eeb61a0bc?auto=format&fit=crop&q=80&w=800" alt="Planta de Usinagem 2D" class="absolute inset-0 w-full h-full object-cover opacity-40 mix-blend-overlay group-hover:scale-110 transition-all duration-500">
+                            <div class="relative z-10 w-full h-full flex items-center justify-center">
+                                <span class="absolute top-2 left-2 text-[10px] font-mono text-tech-cyan">AUTOCAD // 2D DETAIL</span>
+                                <i class="fa-solid fa-compass-drafting text-tech-cyan/80 text-7xl"></i>
+                            </div>
+                        </div>
+                        <div class="p-6 border-t border-tech-cyan/10">
+                            <span class="text-xs font-mono text-tech-cyan uppercase">Planta Técnica & Corte</span>
+                            <h3 class="font-tech font-bold text-xl text-white tracking-wide mt-1">Esquema Mecânico de Bloco de Válvulas</h3>
+                            <p class="text-xs text-gray-500 mt-2">Detalhamento isométrico e cotas de tolerância sob norma DIN ISO 2768.</p>
+                        </div>
+                    </div>
+
+                    <!-- Project Card 3 -->
+                    <div class="project-card group bg-tech-dark rounded-lg overflow-hidden border border-tech-cyan/10 hover:border-tech-cyan/40 transition-all duration-300" data-category="cad">
+                        <div class="relative overflow-hidden h-64 bg-tech-blueprint flex items-center justify-center p-4">
+                            <img src="https://images.unsplash.com/photo-1504917595217-d4dc5ebe6122?auto=format&fit=crop&q=80&w=800" alt="Chassis em Chapa Dobrada" class="absolute inset-0 w-full h-full object-cover opacity-40 mix-blend-overlay group-hover:scale-110 transition-all duration-500">
+                            <div class="relative z-10 w-full h-full flex items-center justify-center">
+                                <span class="absolute top-2 left-2 text-[10px] font-mono text-tech-orange">CAD/CAM SHEET METAL</span>
+                                <i class="fa-solid fa-cube text-tech-orange/80 text-7xl"></i>
+                            </div>
+                        </div>
+                        <div class="p-6 border-t border-tech-cyan/10">
+                            <span class="text-xs font-mono text-tech-cyan uppercase">Chapa Metálica / Dobra</span>
+                            <h3 class="font-tech font-bold text-xl text-white tracking-wide mt-1">Chassis para Painel Eletrônico Rugged</h3>
+                            <p class="text-xs text-gray-500 mt-2">Planificação de corte a laser CNC e cálculo de K-Factor de dobra.</p>
+                        </div>
+                    </div>
+
+                    <!-- Project Card 4 -->
+                    <div class="project-card group bg-tech-dark rounded-lg overflow-hidden border border-tech-cyan/10 hover:border-tech-cyan/40 transition-all duration-300" data-category="detalhamento">
+                        <div class="relative overflow-hidden h-64 bg-tech-blueprint flex items-center justify-center p-4">
+                            <img src="https://images.unsplash.com/photo-1504307651254-35680f356dfd?auto=format&fit=crop&q=80&w=800" alt="Estruturas e Solda" class="absolute inset-0 w-full h-full object-cover opacity-40 mix-blend-overlay group-hover:scale-110 transition-all duration-500">
+                            <div class="relative z-10 w-full h-full flex items-center justify-center">
+                                <span class="absolute top-2 left-2 text-[10px] font-mono text-tech-cyan">AWS WELDING SYMBOLS</span>
+                                <i class="fa-solid fa-fire-burner text-tech-cyan/80 text-7xl"></i>
+                            </div>
+                        </div>
+                        <div class="p-6 border-t border-tech-cyan/10">
+                            <span class="text-xs font-mono text-tech-cyan uppercase">Industrial / Estrutural</span>
+                            <h3 class="font-tech font-bold text-xl text-white tracking-wide mt-1">Dispositivo de Fixação Industrial</h3>
+                            <p class="text-xs text-gray-500 mt-2">Estrutura soldada para suspensão de motores pesados, certificada.</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- ORÇAMENTO RÁPIDO -->
+        <section id="orcamento" class="py-24 relative">
+            <div class="max-w-4xl mx-auto px-6">
+                <div class="bg-tech-dark p-8 md:p-12 rounded-lg border border-tech-cyan/20 cad-corners relative shadow-2xl">
+                    <div class="absolute top-4 right-4 text-[10px] font-mono text-tech-cyan/30">FORM_ID: REQ_0442</div>
+                    <div class="text-center max-w-lg mx-auto mb-10 space-y-3">
+                        <h2 class="text-3xl font-tech font-bold text-white tracking-wide">Solicite Seu Estudo de Projeto</h2>
+                        <p class="text-xs text-gray-400">Preencha os parâmetros abaixo para receber uma análise preliminar e estimativa de custos de engenharia.</p>
+                    </div>
+
+                    <form id="project-form" class="space-y-6" onsubmit="handleFormSubmit(event)">
+                        <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                            <!-- Nome -->
+                            <div class="space-y-1">
+                                <label class="block text-xs font-mono text-tech-cyan uppercase tracking-wider">Seu Nome / Contato *</label>
+                                <input type="text" required class="w-full bg-tech-darkest border border-tech-cyan/30 focus:border-tech-orange text-white px-4 py-3 rounded-sm outline-none transition-colors text-sm" placeholder="Nome Completo">
+                            </div>
+                            <!-- Empresa -->
+                            <div class="space-y-1">
+                                <label class="block text-xs font-mono text-tech-cyan uppercase tracking-wider">Empresa / Setor</label>
+                                <input type="text" class="w-full bg-tech-darkest border border-tech-cyan/30 focus:border-tech-orange text-white px-4 py-3 rounded-sm outline-none transition-colors text-sm" placeholder="Ex: Metalúrgica Alfa">
+                            </div>
+                        </div>
+
+                        <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                            <!-- E-mail -->
+                            <div class="space-y-1">
+                                <label class="block text-xs font-mono text-tech-cyan uppercase tracking-wider">E-mail Corporativo *</label>
+                                <input type="email" required class="w-full bg-tech-darkest border border-tech-cyan/30 focus:border-tech-orange text-white px-4 py-3 rounded-sm outline-none transition-colors text-sm" placeholder="contato@empresa.com">
+                            </div>
+                            <!-- Tipo de Projeto -->
+                            <div class="space-y-1">
+                                <label class="block text-xs font-mono text-tech-cyan uppercase tracking-wider">Categoria do Projeto *</label>
+                                <select required class="w-full bg-tech-darkest border border-tech-cyan/30 focus:border-tech-orange text-white px-4 py-3 rounded-sm outline-none transition-colors text-sm">
+                                    <option value="" disabled selected class="text-gray-500">Selecione uma categoria</option>
+                                    <option value="desenho2d">Desenhos Técnicos Mecânicos 2D</option>
+                                    <option value="modelagem3d">Modelagem 3D & Detalhamento CAD</option>
+                                    <option value="soldagem">Projetos de Soldagem & Estruturas</option>
+                                    <option value="usinagem">Detalhamento para Usinagem / Laser</option>
+                                    <option value="documentacao">Documentação & Manuais Técnicos</option>
+                                    <option value="outro">Outros Serviços Industriais</option>
+                                </select>
+                            </div>
+                        </div>
+
+                        <!-- Descrição -->
+                        <div class="space-y-1">
+                            <label class="block text-xs font-mono text-tech-cyan uppercase tracking-wider">Escopo Preliminar & Requisitos do Projeto *</label>
+                            <textarea required rows="4" class="w-full bg-tech-darkest border border-tech-cyan/30 focus:border-tech-orange text-white px-4 py-3 rounded-sm outline-none transition-colors text-sm" placeholder="Descreva os requisitos, dimensões estimadas, materiais ou detalhes técnicos..."></textarea>
+                        </div>
+
+                        <!-- File Input Mock -->
+                        <div class="border border-dashed border-tech-cyan/30 bg-tech-darkest/50 p-6 text-center rounded-sm">
+                            <i class="fa-solid fa-cloud-arrow-up text-tech-cyan text-2xl mb-2"></i>
+                            <p class="text-xs text-gray-400">Arraste esboços, arquivos STP, DWG, PDF ou fotos (Max. 20MB)</p>
+                            <input type="file" class="hidden" id="file-upload">
+                            <button type="button" onclick="document.getElementById('file-upload').click()" class="mt-3 bg-transparent border border-tech-cyan text-tech-cyan hover:bg-tech-cyan hover:text-tech-darkest text-xs font-tech font-bold px-4 py-2 transition-all duration-300">ANEXAR ENGENHARIA</button>
+                        </div>
+
+                        <!-- Submit Button -->
+                        <div class="text-center pt-2">
+                            <button type="submit" class="w-full md:w-auto bg-tech-orange text-tech-darkest hover:bg-yellow-500 font-tech font-bold text-lg px-12 py-4 rounded-sm transition-all duration-300 tracking-widest uppercase">
+                                <i class="fa-solid fa-paper-plane mr-2"></i>Enviar Requisição Técnica
+                            </button>
+                        </div>
+                    </form>
+
+                    <!-- Success Message Alert -->
+                    <div id="form-success" class="hidden mt-6 p-4 bg-emerald-500/20 border border-emerald-500 text-emerald-200 text-sm text-center rounded-sm">
+                        <i class="fa-solid fa-circle-check mr-2"></i> Requisição enviada para nosso setor de engenharia com sucesso! Retornaremos o contato em breve.
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- DEPOIMENTOS DE CLIENTES INDUSTRIAIS -->
+        <section id="depoimentos" class="py-24 bg-tech-dark/50 border-b border-tech-cyan/10">
+            <div class="max-w-7xl mx-auto px-6">
+                <div class="text-center max-w-2xl mx-auto mb-16 space-y-4">
+                    <div class="inline-flex items-center space-x-2 bg-tech-cyan/10 border border-tech-cyan/30 px-3 py-1 rounded-full">
+                        <span class="text-xs font-mono text-tech-cyan uppercase tracking-widest">Garantia de Confiança</span>
+                    </div>
+                    <h2 class="text-3xl md:text-4xl font-tech font-bold text-white">O que Nossos Parceiros Dizem</h2>
+                </div>
+
+                <!-- Testimonials Grid -->
+                <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
+                    <!-- Testimonial 1 -->
+                    <div class="bg-tech-dark p-8 rounded-lg border border-tech-cyan/10 relative">
+                        <i class="fa-solid fa-quote-left text-3xl text-tech-cyan/10 absolute top-4 left-4"></i>
+                        <p class="text-gray-300 text-sm italic mb-6 relative z-10">"A equipe da Apex entregou o detalhamento 2D e modelagem 3D do nosso novo reator em tempo recorde. Os desenhos de fabricação vieram perfeitos para corte laser, sem retrabalhos na nossa caldeiraria."</p>
+                        <div>
+                            <h4 class="font-tech font-bold text-white">Eng. Marcos Ribeiro</h4>
+                            <p class="text-xs text-tech-orange">Gerente de Manufatura - Metalúrgica Sul</p>
+                        </div>
+                    </div>
+
+                    <!-- Testimonial 2 -->
+                    <div class="bg-tech-dark p-8 rounded-lg border border-tech-cyan/10 relative">
+                        <i class="fa-solid fa-quote-left text-3xl text-tech-cyan/10 absolute top-4 left-4"></i>
+                        <p class="text-gray-300 text-sm italic mb-6 relative z-10">"Trabalhamos em conjunto no desenvolvimento de uma linha de robótica para montagem automotiva. O nível de rigor geométrico (GD&T) dos desenhos técnicos eliminou todas as dúvidas de montagem física."</p>
+                        <div>
+                            <h4 class="font-tech font-bold text-white">Dra. Juliana Mendes</h4>
+                            <p class="text-xs text-tech-orange">Diretora de P&D - AutoTech Brasil</p>
+                        </div>
+                    </div>
+
+                    <!-- Testimonial 3 -->
+                    <div class="bg-tech-dark p-8 rounded-lg border border-tech-cyan/10 relative">
+                        <i class="fa-solid fa-quote-left text-3xl text-tech-cyan/10 absolute top-4 left-4"></i>
+                        <p class="text-gray-300 text-sm italic mb-6 relative z-10">"Excelente suporte com documentação técnica e projeto de simulação FEA. Eles nos ajudaram a reduzir o peso da nossa estrutura de andaimes em 15% sem comprometer a segurança mecânica."</p>
+                        <div>
+                            <h4 class="font-tech font-bold text-white">Carlos Eduardo</h4>
+                            <p class="text-xs text-tech-orange">Supervisor de Obras - Consórcio Norte Engenharia</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- FOOTER -->
+        <footer class="bg-tech-darkest border-t border-tech-cyan/20 py-16 text-gray-400 text-sm relative">
+            <div class="max-w-7xl mx-auto px-6 grid grid-cols-1 md:grid-cols-4 gap-8">
+                
+                <!-- Logo & Bio -->
+                <div class="space-y-4">
+                    <a href="#" class="flex items-center space-x-3">
+                        <div class="relative w-8 h-8 flex items-center justify-center">
+                            <i class="fa-solid fa-gear text-tech-orange text-xl absolute rotate-gear"></i>
+                            <i class="fa-solid fa-compass-drafting text-tech-cyan text-xs absolute"></i>
+                        </div>
+                        <div>
+                            <span class="font-tech text-xl font-bold tracking-wider text-white">APEX</span>
+                            <span class="font-tech text-[10px] block text-tech-cyan tracking-[0.25em] -mt-1">ENGENHARIA</span>
+                        </div>
+                    </a>
+                    <p class="text-xs text-gray-500 leading-relaxed">Alta tecnologia em engenharia reversa, desenhos técnicos 2D/3D e projetos mecânicos industriais complexos.</p>
+                </div>
+
+                <!-- Links Rápidos -->
+                <div>
+                    <h4 class="font-tech font-bold text-white text-lg tracking-wider mb-4 uppercase">Sitemap</h4>
+                    <ul class="space-y-2 text-xs">
+                        <li><a href="#inicio" class="hover:text-tech-orange transition-colors">Início</a></li>
+                        <li><a href="#sobre" class="hover:text-tech-orange transition-colors">Quem Somos</a></li>
+                        <li><a href="#servicos" class="hover:text-tech-orange transition-colors">Nossos Serviços</a></li>
+                        <li><a href="#portfolio" class="hover:text-tech-orange transition-colors">Nosso Portfólio</a></li>
+                    </ul>
+                </div>
+
+                <!-- Contatos -->
+                <div>
+                    <h4 class="font-tech font-bold text-white text-lg tracking-wider mb-4 uppercase">Contato</h4>
+                    <ul class="space-y-2 text-xs">
+                        <li><i class="fa-solid fa-phone text-tech-cyan mr-2"></i> +55 28 99435403</li>
+                        <li><i class="fa-solid fa-envelope text-tech-cyan mr-2"></i> <a href="mailto:jumarjosebravinpaulino@gmail.com" class="hover:underline">jumarjosebravinpaulino@gmail.com</a></li>
+                        <li><i class="fa-solid fa-location-dot text-tech-cyan mr-2"></i> Atendimento Digital & Projetos Remotos para todo o Brasil</li>
+                    </ul>
+                </div>
+
+                <!-- Redes Sociais & Certificações -->
+                <div>
+                    <h4 class="font-tech font-bold text-white text-lg tracking-wider mb-4 uppercase">Redes Sociais</h4>
+                    <div class="flex space-x-4 mb-4">
+                        <!-- Instagram -->
+                        <a href="https://www.instagram.com/jumarjosebravin/" target="_blank" class="w-8 h-8 rounded-full bg-tech-dark border border-tech-cyan/20 hover:border-tech-orange hover:text-tech-orange flex items-center justify-center transition-all duration-300">
+                            <i class="fa-brands fa-instagram"></i>
+                        </a>
+                        <!-- WhatsApp Link -->
+                        <a href="https://wa.me/552899435403" target="_blank" class="w-8 h-8 rounded-full bg-tech-dark border border-tech-cyan/20 hover:border-tech-orange hover:text-tech-orange flex items-center justify-center transition-all duration-300">
+                            <i class="fa-brands fa-whatsapp"></i>
+                        </a>
+                    </div>
+                    <span class="text-[10px] text-gray-500 uppercase block font-mono">ART RESTRITA A ENGENHEIROS DEVIDAMENTE REGISTRADOS NO CREA.</span>
+                </div>
+            </div>
+
+            <div class="max-w-7xl mx-auto px-6 mt-12 pt-8 border-t border-tech-cyan/10 text-center text-xs text-gray-600">
+                <p>&copy; 2026 Apex Engenharia de Projetos Ltda. Todos os direitos reservados. Projetado para Indústria 4.0.</p>
+            </div>
+        </footer>
+
+        <!-- BOTÃO FLUTUANTE DE WHATSAPP -->
+        <a href="https://wa.me/552899435403?text=Olá,%20gostaria%20de%20um%20orçamento%20de%20projeto%20técnico%20mecânico." 
+           target="_blank" 
+           class="fixed bottom-6 right-6 z-50 bg-[#25D366] text-white p-4 rounded-full shadow-lg hover:scale-110 hover:rotate-3 transition-transform duration-300 flex items-center justify-center"
+           title="Fale Conosco pelo WhatsApp">
+            <i class="fa-brands fa-whatsapp text-3xl"></i>
+        </a>
+
+    </div>
+
+    <!-- SCRIPT DE COMPORTAMENTO INTERATIVO -->
+    <script>
+        // Menu Responsivo Mobile Toggle
+        const menuBtn = document.getElementById('mobile-menu-btn');
+        const mobileMenu = document.getElementById('mobile-menu');
+
+        menuBtn.addEventListener('click', () => {
+            mobileMenu.classList.toggle('hidden');
+        });
+
+        // Fechar menu mobile ao clicar em algum link
+        document.querySelectorAll('#mobile-menu a').forEach(link => {
+            link.addEventListener('click', () => {
+                mobileMenu.classList.add('hidden');
+            });
+        });
+
+        // Filtro do Portfólio
+        function filterPortfolio(category) {
+            // Atualizar cor ativa dos botões de abas
+            const tabs = document.querySelectorAll('.portfolio-tab');
+            tabs.forEach(tab => {
+                tab.classList.remove('active', 'bg-tech-cyan', 'text-tech-darkest');
+                tab.classList.add('text-gray-300', 'border-tech-cyan/30');
+            });
+
+            // Adicionar destaque na aba clicada
+            event.target.classList.add('active', 'bg-tech-cyan', 'text-tech-darkest');
+            event.target.classList.remove('text-gray-300', 'border-tech-cyan/30');
+
+            // Filtrar itens visíveis
+            const cards = document.querySelectorAll('.project-card');
+            cards.forEach(card => {
+                if (category === 'todos') {
+                    card.style.display = 'block';
+                } else if (card.getAttribute('data-category') === category) {
+                    card.style.display = 'block';
+                } else {
+                    card.style.display = 'none';
+                }
+            });
+        }
+
+        // Simulação elegante do formulário de Orçamento Rápido
+        function handleFormSubmit(event) {
+            event.preventDefault();
+            const form = document.getElementById('project-form');
+            const successMsg = document.getElementById('form-success');
+
+            // Exibir animação rápida
+            const submitBtn = form.querySelector('button[type="submit"]');
+            submitBtn.innerHTML = `<i class="fa-solid fa-spinner animate-spin mr-2"></i> PROCESSANDO REQUISITOS...`;
+            submitBtn.disabled = true;
+
+            setTimeout(() => {
+                form.reset();
+                submitBtn.innerHTML = `<i class="fa-solid fa-paper-plane mr-2"></i>Enviar Requisição Técnica`;
+                submitBtn.disabled = false;
+                successMsg.classList.remove('hidden');
+
+                // Ocultar mensagem após 6 segundos
+                setTimeout(() => {
+                    successMsg.classList.add('hidden');
+                }, 6000);
+            }, 2000);
+        }
+    </script>
+</body>
+</html>
